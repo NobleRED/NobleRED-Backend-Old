@@ -2,7 +2,7 @@ var admin = require('firebase-admin');
 var express = require('express');
 var bodyparser = require('body-parser');
 
-var serviceAccount = require("./noble-red-9d387-firebase-adminsdk-qefui-25b552376d.json");
+var serviceAccount = require("./account/serviceAccount.json");
 var email = "damsarar@gmail.com";
 var uid = "jcez807hoXVqnJcttor5zdK2OuM2"
 
@@ -40,5 +40,22 @@ app.get('/', function (req, res) {
 });
 
 app.get('/users', function (req, res) {
-    res.send("All the users");
+    function listAllUsers(nextPageToken) {
+        // List batch of users, 1000 at a time.
+        admin.auth().listUsers(1000, nextPageToken)
+            .then(function (listUsersResult) {
+                listUsersResult.users.forEach(function (userRecord) {
+                    console.log('user', userRecord.toJSON());
+                });
+                if (listUsersResult.pageToken) {
+                    // List next batch of users.
+                    listAllUsers(listUsersResult.pageToken);
+                }
+            })
+            .catch(function (error) {
+                console.log('Error listing users:', error);
+            });
+    }
+    // Start listing users from the beginning, 1000 at a time.
+    listAllUsers();
 });
