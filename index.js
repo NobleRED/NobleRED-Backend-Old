@@ -1,6 +1,7 @@
 var admin = require('firebase-admin');
 var express = require('express');
 var bodyparser = require('body-parser');
+var moment = require('moment');
 
 var serviceAccount = require("./account/serviceAccount.json");
 var email = "damsarar@gmail.com";
@@ -10,52 +11,75 @@ var app = express();
 app.use(bodyparser.json());
 app.listen(4200, () => console.log("Backend started"));
 
+// To enable cross-origin access
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://noble-red-9d387.firebaseio.com"
 })
 
-admin.auth().getUserByEmail(email)
-    .then(function (userRecord) {
-        // See the UserRecord reference doc for the contents of userRecord.
-        console.log('Successfully fetched user data:', userRecord.toJSON());
-    })
-    .catch(function (error) {
-        console.log('Error fetching user data:', error);
-    });
+var db = admin.firestore();
+
+// admin.auth().getUserByEmail(email)
+//     .then(function (userRecord) {
+//         // See the UserRecord reference doc for the contents of userRecord.
+//         console.log('Successfully fetched user data:', userRecord.toJSON());
+//     })
+//     .catch(function (error) {
+//         console.log('Error fetching user data:', error);
+//     });
 
 
-admin.auth().getUser(uid)
-    .then(function (userRecord) {
-        // See the UserRecord reference doc for the contents of userRecord.
-        console.log('Successfully fetched user data:', userRecord.toJSON());
-    })
-    .catch(function (error) {
-        console.log('Error fetching user data:', error);
-    });
+// admin.auth().getUser(uid)
+//     .then(function (userRecord) {
+//         // See the UserRecord reference doc for the contents of userRecord.
+//         console.log('Successfully fetched user data:', userRecord.toJSON());
+//     })
+//     .catch(function (error) {
+//         console.log('Error fetching user data:', error);
+//     });
 
 
-app.get('/', function (req, res) {
+app.get('/api', function (req, res) {
     res.send("NobleRED Backend");
 });
 
-app.get('/users', function (req, res) {
-    function listAllUsers(nextPageToken) {
-        // List batch of users, 1000 at a time.
-        admin.auth().listUsers(1000, nextPageToken)
-            .then(function (listUsersResult) {
-                listUsersResult.users.forEach(function (userRecord) {
-                    console.log('user', userRecord.toJSON());
-                });
-                if (listUsersResult.pageToken) {
-                    // List next batch of users.
-                    listAllUsers(listUsersResult.pageToken);
-                }
-            })
-            .catch(function (error) {
-                console.log('Error listing users:', error);
+// get all the blood donation campaigns
+app.get('/api/campaigns', function (req, res) {
+    const posts = [];
+
+    db.collection("posts").doc("campaign_posts").collection("campaign_posts").get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                dataArray.publishedDateTimeAgo = moment(
+                    doc.data().publishedDateTime
+                ).fromNow();
+
+                // push data to the posts array
+                posts.push(dataArray)
+
             });
-    }
-    // Start listing users from the beginning, 1000 at a time.
-    listAllUsers();
+
+            console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(posts))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
 });
