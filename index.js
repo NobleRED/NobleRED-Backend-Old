@@ -87,6 +87,41 @@ app.get('/api/campaigns', function (req, res) {
         });
 });
 
+//get all blood needed posts
+app.get('/api/blood_needed_posts', function (req, res) {
+    const blood_need_posts = [];
+
+    db.collection("posts").doc("blood_needed_posts").collection("blood_needed_posts").get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                dataArray.publishedDateTimeAgo = moment(
+                    doc.data().publishedDateTime
+                ).fromNow();
+
+                // push data to the posts array
+                blood_need_posts.push(dataArray)
+
+            });
+
+            console.log("blood_need_posts: " + JSON.stringify(blood_need_posts))
+            res.send(JSON.stringify(blood_need_posts))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+
 app.get('/api/organizers', function (req, res) {
     const posts = [];
 
@@ -104,7 +139,7 @@ app.get('/api/organizers', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                // dataArray.publishedDateTimeAgo = moment(
+              // dataArray.publishedDateTimeAgo = moment(
                 //     doc.data().publishedDateTime
                 // ).fromNow();
 
@@ -120,6 +155,7 @@ app.get('/api/organizers', function (req, res) {
             console.log('Error getting documents', err);
         });
 });
+       
 
 app.get('/api/donors', function (req, res) {
     const posts = [];
