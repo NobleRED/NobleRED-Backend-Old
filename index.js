@@ -221,6 +221,7 @@ app.get('/api/donors/:uid', function (req, res) {
 app.get('/api/organizers/:uid', function (req, res) {
     const uid = req.params.uid
 
+    // matches the uid with the given parameter
     db.collection("users").doc("organizers").collection("organizers").where("uid", "==", uid).get()
         .then(function (querySnapshot) {
             querySnapshot.forEach(function (doc) {
@@ -233,7 +234,6 @@ app.get('/api/organizers/:uid', function (req, res) {
             console.log("Error getting documents: ", error);
         });
 
-    // var query = dataRef.where("uid", "==", true);
 });
 
 // app.post('/api/signup/donor', function (req, res) {
