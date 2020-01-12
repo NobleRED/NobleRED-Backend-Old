@@ -217,6 +217,25 @@ app.get('/api/donors/:uid', function (req, res) {
 });
 
 
+// get organizer by id
+app.get('/api/organizers/:uid', function (req, res) {
+    const uid = req.params.uid
+
+    db.collection("users").doc("organizers").collection("organizers").where("uid", "==", uid).get()
+        .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                res.send(JSON.stringify(doc.data()))
+            });
+        })
+        .catch(function (error) {
+            console.log("Error getting documents: ", error);
+        });
+
+    // var query = dataRef.where("uid", "==", true);
+});
+
 // app.post('/api/signup/donor', function (req, res) {
 //     var firstName = req.body.fname
 //     var lastName = req.body.lname
