@@ -89,6 +89,90 @@ app.get('/api/campaigns', function (req, res) {
 });
 
 
+// insert a new campaign request to the db
+app.post('/api/campaigns', function (req, res) {
+
+    db.collection("campaigns").doc("accepted_campaigns").collection("accepted_campaigns").add({
+        organizerID: req.body.organizerID,
+        organizerName: req.body.organizerName,
+        address: req.body.address,
+        province: req.body.province,
+        district: req.body.district,
+        date: req.body.date,
+        time: req.body.time,
+        publishedDateTime: req.body.publishedDateTime
+    })
+        .then(function (docRef) {
+            console.log("Document written with ID: ", docRef.id);
+            res.send(200, "Document written with ID: ", docRef.id)
+        })
+        .catch(function (error) {
+            console.error("Error adding document: ", error);
+        });
+});
+
+
+
+// get all the blood donation campaign requests
+app.get('/api/campaignreq', function (req, res) {
+    const campaign_requests = [];
+
+    db.collection("campaigns").doc("campaign_requests").collection("campaign_requests").get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                dataArray.publishedDateTimeAgo = moment(
+                    doc.data().publishedDateTime
+                ).fromNow();
+
+                // push data to the posts array
+                campaign_requests.push(dataArray)
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(campaign_requests))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+
+
+// insert a new campaign request to the db
+app.post('/api/campaignreq', function (req, res) {
+
+    db.collection("campaigns").doc("campaign_requests").collection("campaign_requests").add({
+        organizerID: req.body.organizerID,
+        organizerName: req.body.organizerName,
+        address: req.body.address,
+        province: req.body.province,
+        district: req.body.district,
+        date: req.body.date,
+        time: req.body.time,
+        publishedDateTime: req.body.publishedDateTime
+    })
+        .then(function (docRef) {
+            console.log("Document written with ID: ", docRef.id);
+            res.send(200, "Document written with ID: ", docRef.id)
+        })
+        .catch(function (error) {
+            console.error("Error adding document: ", error);
+        });
+});
+
+
+
 //get all blood needed posts
 app.get('/api/blood_needed_posts', function (req, res) {
     const blood_need_posts = [];
@@ -158,6 +242,7 @@ app.get('/api/organizers', function (req, res) {
         .catch(err => {
             console.log('Error getting documents', err);
         });
+
 });
 
 
@@ -212,8 +297,6 @@ app.get('/api/donors/:uid', function (req, res) {
         .catch(function (error) {
             console.log("Error getting documents: ", error);
         });
-
-    // var query = dataRef.where("uid", "==", true);
 });
 
 
@@ -233,7 +316,6 @@ app.get('/api/organizers/:uid', function (req, res) {
         .catch(function (error) {
             console.log("Error getting documents: ", error);
         });
-
 });
 
 // app.post('/api/signup/donor', function (req, res) {
