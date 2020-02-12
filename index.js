@@ -53,7 +53,7 @@ app.get('/api', function (req, res) {
 app.get('/api/campaigns', function (req, res) {
     const posts = [];
 
-    db.collection("posts").doc("campaign_posts").collection("campaign_posts").get().
+    db.collection("campaigns-accepted").get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
