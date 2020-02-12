@@ -52,6 +52,7 @@ app.get('/api', function (req, res) {
     res.send("NobleRED Backend");
 });
 
+
 // get all the blood donation campaigns
 app.get('/api/campaigns', function (req, res) {
     const posts = [];
@@ -64,7 +65,7 @@ app.get('/api/campaigns', function (req, res) {
             }
 
             snapshot.forEach(doc => {
-                console.log(doc.id, '=>', doc.data());
+                // console.log(doc.id, '=>', doc.data());
 
                 // putting data to dataArray from firebase data object
                 var dataArray = doc.data();
@@ -87,6 +88,91 @@ app.get('/api/campaigns', function (req, res) {
         });
 });
 
+
+// insert a new campaign request to the db
+app.post('/api/campaigns', function (req, res) {
+
+    db.collection("campaigns").doc("accepted_campaigns").collection("accepted_campaigns").add({
+        organizerID: req.body.organizerID,
+        organizerName: req.body.organizerName,
+        address: req.body.address,
+        province: req.body.province,
+        district: req.body.district,
+        date: req.body.date,
+        time: req.body.time,
+        publishedDateTime: req.body.publishedDateTime
+    })
+        .then(function (docRef) {
+            console.log("Document written with ID: ", docRef.id);
+            res.send(200, "Document written with ID: ", docRef.id)
+        })
+        .catch(function (error) {
+            console.error("Error adding document: ", error);
+        });
+});
+
+
+
+// get all the blood donation campaign requests
+app.get('/api/campaignreq', function (req, res) {
+    const campaign_requests = [];
+
+    db.collection("campaigns").doc("campaign_requests").collection("campaign_requests").get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                dataArray.publishedDateTimeAgo = moment(
+                    doc.data().publishedDateTime
+                ).fromNow();
+
+                // push data to the posts array
+                campaign_requests.push(dataArray)
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(campaign_requests))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+
+
+// insert a new campaign request to the db
+app.post('/api/campaignreq', function (req, res) {
+
+    db.collection("campaigns").doc("campaign_requests").collection("campaign_requests").add({
+        organizerID: req.body.organizerID,
+        organizerName: req.body.organizerName,
+        address: req.body.address,
+        province: req.body.province,
+        district: req.body.district,
+        date: req.body.date,
+        time: req.body.time,
+        publishedDateTime: req.body.publishedDateTime
+    })
+        .then(function (docRef) {
+            console.log("Document written with ID: ", docRef.id);
+            res.send(200, "Document written with ID: ", docRef.id)
+        })
+        .catch(function (error) {
+            console.error("Error adding document: ", error);
+        });
+});
+
+
+
 //get all blood needed posts
 app.get('/api/blood_needed_posts', function (req, res) {
     const blood_need_posts = [];
@@ -99,7 +185,7 @@ app.get('/api/blood_needed_posts', function (req, res) {
             }
 
             snapshot.forEach(doc => {
-                console.log(doc.id, '=>', doc.data());
+                // console.log(doc.id, '=>', doc.data());
 
                 // putting data to dataArray from firebase data object
                 var dataArray = doc.data();
@@ -122,6 +208,8 @@ app.get('/api/blood_needed_posts', function (req, res) {
         });
 });
 
+
+// get all organizers
 app.get('/api/organizers', function (req, res) {
     const posts = [];
 
@@ -133,13 +221,13 @@ app.get('/api/organizers', function (req, res) {
             }
 
             snapshot.forEach(doc => {
-                console.log(doc.id, '=>', doc.data());
+                // console.log(doc.id, '=>', doc.data());
 
                 // putting data to dataArray from firebase data object
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-              // dataArray.publishedDateTimeAgo = moment(
+                // dataArray.publishedDateTimeAgo = moment(
                 //     doc.data().publishedDateTime
                 // ).fromNow();
 
@@ -154,9 +242,11 @@ app.get('/api/organizers', function (req, res) {
         .catch(err => {
             console.log('Error getting documents', err);
         });
-});
-       
 
+});
+
+
+// get all donors
 app.get('/api/donors', function (req, res) {
     const posts = [];
 
@@ -168,7 +258,7 @@ app.get('/api/donors', function (req, res) {
             }
 
             snapshot.forEach(doc => {
-                console.log(doc.id, '=>', doc.data());
+                // console.log(doc.id, '=>', doc.data());
 
                 // putting data to dataArray from firebase data object
                 var dataArray = doc.data();
@@ -191,42 +281,79 @@ app.get('/api/donors', function (req, res) {
         });
 });
 
-app.post('/api/signup/donor', function (req, res) {
-    var firstName = req.body.fname
-    var lastName = req.body.lname
-    var nic = req.body.nic
-    var dob = req.body.dob
-    var address = req.body.inputAddress
-    var contactNo = req.body.contactNo
-    var radios = req.body.radios
-    var img = req.body.img
-    var email = req.body.email
-    var password = req.body.password
 
-    auth.createUserWithEmailAndPassword(this.email, this.password).catch(function (error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // ...
-    });
+// get donor by id
+app.get('/api/donors/:uid', function (req, res) {
+    const uid = req.params.uid
 
-    auth.getUserByEmail(this.email).then(function (userRecord) {
-        // See the UserRecord reference doc for the contents of userRecord.
-        console.log('Successfully fetched user data:', userRecord.toJSON());
-    })
+    db.collection("users").doc("donors").collection("donors").where("uid", "==", uid).get()
+        .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                res.send(JSON.stringify(doc.data()))
+            });
+        })
         .catch(function (error) {
-            console.log('Error fetching user data:', error);
+            console.log("Error getting documents: ", error);
         });
-
-    var user = auth.currentUser;
-
-    if (user) {
-        // User is signed in.
-    } else {
-        // No user is signed in.
-    }
-
 });
+
+
+// get organizer by id
+app.get('/api/organizers/:uid', function (req, res) {
+    const uid = req.params.uid
+
+    // matches the uid with the given parameter
+    db.collection("users").doc("organizers").collection("organizers").where("uid", "==", uid).get()
+        .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                res.send(JSON.stringify(doc.data()))
+            });
+        })
+        .catch(function (error) {
+            console.log("Error getting documents: ", error);
+        });
+});
+
+// app.post('/api/signup/donor', function (req, res) {
+//     var firstName = req.body.fname
+//     var lastName = req.body.lname
+//     var nic = req.body.nic
+//     var dob = req.body.dob
+//     var address = req.body.inputAddress
+//     var contactNo = req.body.contactNo
+//     var radios = req.body.radios
+//     var img = req.body.img
+//     var email = req.body.email
+//     var password = req.body.password
+
+//     auth.createUserWithEmailAndPassword(this.email, this.password).catch(function (error) {
+//         // Handle Errors here.
+//         var errorCode = error.code;
+//         var errorMessage = error.message;
+//         // ...
+//     });
+
+//     auth.getUserByEmail(this.email).then(function (userRecord) {
+//         // See the UserRecord reference doc for the contents of userRecord.
+//         // console.log('Successfully fetched user data:', userRecord.toJSON());
+//     })
+//         .catch(function (error) {
+//             console.log('Error fetching user data:', error);
+//         });
+
+//     var user = auth.currentUser;
+
+//     if (user) {
+//         // User is signed in.
+//     } else {
+//         // No user is signed in.
+//     }
+
+// });
 
 
 // app.post('/api/login', function (req, res) {
