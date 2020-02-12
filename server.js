@@ -23,7 +23,8 @@ admin.initializeApp({
 
 var db = admin.firestore();
 
-app.use('/api/campaigns/requests', './routes/api/')
+const campaignReq = require('./routes/api/')
+app.use('/api/campaigns/requests', )
 
 app.get('/api', function (req, res) {
     res.send("NobleRED Backend");
