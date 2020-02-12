@@ -57,7 +57,7 @@ app.get('/api', function (req, res) {
 app.get('/api/campaigns', function (req, res) {
     const posts = [];
 
-    db.collection("posts").doc("campaign_posts").collection("campaign_posts").get().
+    db.collection("posts").doc("campaign_posts").collection("campaign_posts").where('status', '==', 'accepted').get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
@@ -92,7 +92,7 @@ app.get('/api/campaigns', function (req, res) {
 // insert a new campaign request to the db
 app.post('/api/campaigns', function (req, res) {
 
-    db.collection("campaigns").doc("accepted_campaigns").collection("accepted_campaigns").add({
+    db.collection("posts").doc("campaign_posts").collection("campaign_posts").add({
         organizerID: req.body.organizerID,
         organizerName: req.body.organizerName,
         address: req.body.address,
@@ -100,6 +100,8 @@ app.post('/api/campaigns', function (req, res) {
         district: req.body.district,
         date: req.body.date,
         time: req.body.time,
+        lat: req.body.lat,
+        lng: req.body.lng,
         publishedDateTime: req.body.publishedDateTime
     })
         .then(function (docRef) {
@@ -111,13 +113,30 @@ app.post('/api/campaigns', function (req, res) {
         });
 });
 
+// accepting a new campaign request to the db
+app.post('/api/campaignreq/:cid', function (req, res) {
+    const cid = req.params.cid
+
+
+    const docRef = db.collection("posts").doc("campaign_posts").collection("campaign_posts").where("campaignID", '==', cid);
+    docRef.update({
+        status: 'accepted'
+    })
+        .then(function (docRef) {
+            console.log("Updated successfully: ", docRef.id);
+            res.send(200, "Document written with ID: ", docRef.id)
+        })
+        .catch(function (error) {
+            console.error("Error updating document: ", error);
+        });
+});
 
 
 // get all the blood donation campaign requests
 app.get('/api/campaignreq', function (req, res) {
     const campaign_requests = [];
 
-    db.collection("campaigns").doc("campaign_requests").collection("campaign_requests").get().
+    db.collection("posts").doc("campaign_posts").collection("campaign_posts").where('status', '==', 'pending').get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
@@ -211,7 +230,7 @@ app.get('/api/blood_needed_posts', function (req, res) {
 
 // get all organizers
 app.get('/api/organizers', function (req, res) {
-    const posts = [];
+    const organizers = [];
 
     db.collection("users").doc("organizers").collection("organizers").get().
         then(snapshot => {
@@ -227,17 +246,17 @@ app.get('/api/organizers', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                // dataArray.publishedDateTimeAgo = moment(
-                //     doc.data().publishedDateTime
-                // ).fromNow();
+                dataArray.registeredDateTimeAgo = moment(
+                    doc.data().createdAt
+                ).fromNow();
 
                 // push data to the posts array
-                posts.push(dataArray)
+                organizers.push(dataArray)
 
             });
 
             // console.log("posts: " + JSON.stringify(posts))
-            res.send(JSON.stringify(posts))
+            res.send(JSON.stringify(organizers))
         })
         .catch(err => {
             console.log('Error getting documents', err);
@@ -245,6 +264,76 @@ app.get('/api/organizers', function (req, res) {
 
 });
 
+// insert a new organizer to the db
+app.post('/api/organizer', function (req, res) {
+
+    db.collection("users").doc("organizers").collection("organizers").add({
+        organizerID: req.body.organizerID,
+        organizerName: req.body.organizerName,
+        contactPerson: req.body.contactPerson,
+        contactPersonNIC: req.body.contactPersonNIC,
+        contactNo: req.body.contactNo,
+        address: req.body.address,
+        email: req.body.email,
+        createdAt: req.body.createdAt,
+        role: req.body.role,
+        status: req.body.status
+    })
+        .then(function (docRef) {
+            console.log("Document written with ID: ", docRef.id);
+            res.send(200, "Document written with ID: ", docRef.id)
+        })
+        .catch(function (error) {
+            console.error("Error adding document: ", error);
+        });
+});
+
+// get the next organizer id
+app.get('/api/organizers/nextid', function (req, res) {
+    const organizers = [];
+    var lastID;
+    var tempID;
+    var nextID;
+
+    db.collection("users").doc("organizers").collection("organizers").orderBy('createdAt', "desc").limit(1).get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                // console.log('No matching documents.');
+                res.send('ORG-000001')
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                var dataArray = doc.data();
+                organizers.push(dataArray);
+            });
+
+            lastID = parseInt(organizers[0].organizerID.substring(4));
+            tempID = lastID + 1;
+
+            if (tempID < 1000000 && tempID >= 100000) {
+                nextID = 'ORG-' + tempID;
+            } else if (tempID < 100000 && tempID >= 10000) {
+                nextID = 'ORG-0' + tempID;
+            } else if (tempID < 10000 && tempID >= 1000) {
+                nextID = 'ORG-00' + tempID;
+            } else if (tempID < 1000 && tempID >= 100) {
+                nextID = 'ORG-000' + tempID;
+            } else if (tempID < 100 && tempID >= 10) {
+                nextID = 'ORG-0000' + tempID;
+            } else if (tempID < 10) {
+                nextID = 'ORG-00000' + tempID;
+            } else {
+                nextID = "Limit exceeded!"
+            }
+
+            // console.log("posts: ", lastOrganizerID, nextOrganizerID)
+            res.send(nextID)
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
 
 // get all donors
 app.get('/api/donors', function (req, res) {
@@ -299,6 +388,52 @@ app.get('/api/donors/:uid', function (req, res) {
         });
 });
 
+// get the next donor id
+app.get('/api/donors/nextid', function (req, res) {
+    const donors = [];
+    var lastID;
+    var tempID;
+    var nextID;
+
+    db.collection("users").doc("donors").collection("donors").orderBy('createdAt', "desc").limit(1).get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                // console.log('No matching documents.');
+                res.send('DNR-000001')
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                var dataArray = doc.data();
+                donors.push(dataArray);
+            });
+
+            lastID = parseInt(donors[0].organizerID.substring(4));
+            tempID = lastID + 1;
+
+            if (tempID < 1000000 && tempID >= 100000) {
+                nextID = 'DNR-' + tempID;
+            } else if (tempID < 100000 && tempID >= 10000) {
+                nextID = 'DNR-0' + tempID;
+            } else if (tempID < 10000 && tempID >= 1000) {
+                nextID = 'DNR-00' + tempID;
+            } else if (tempID < 1000 && tempID >= 100) {
+                nextID = 'DNR-000' + tempID;
+            } else if (tempID < 100 && tempID >= 10) {
+                nextID = 'DNR-0000' + tempID;
+            } else if (tempID < 10) {
+                nextID = 'DNR-00000' + tempID;
+            } else {
+                nextID = "Limit exceeded!"
+            }
+
+            // console.log("posts: ", lastOrganizerID, nextOrganizerID)
+            res.send(nextID)
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
 
 // get organizer by id
 app.get('/api/organizers/:uid', function (req, res) {
@@ -317,6 +452,8 @@ app.get('/api/organizers/:uid', function (req, res) {
             console.log("Error getting documents: ", error);
         });
 });
+
+
 
 // app.post('/api/signup/donor', function (req, res) {
 //     var firstName = req.body.fname
