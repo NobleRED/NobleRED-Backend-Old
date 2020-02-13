@@ -74,7 +74,7 @@ app.use('/api/campaigns/requests', acceptReq );
 // POSTS
 
 //get all blood needed posts
-const bloodReq = require('./routes/api/campaigns/viewRequests');
+const bloodReq = require('./routes/api/posts/bloodNeeded');
 app.use('/api/blood_needed_posts', bloodReq );
 
 
@@ -110,3 +110,21 @@ app.use('/api/donors/:uid', donId );
 // get the next donor id
 const nextDonId = require('./routes/api/donor/nextDonorId');
 app.use('/api/donors/nextid', nextDonId );
+
+// MAPS
+
+// get past campaign markers in grey
+const greyMarkers = require('./routes/api/maps/greyMarkers');
+app.use('/api/maps/greyMarkers', greyMarkers);
+
+// get past campaign markers in red
+// const redMarkers = require('./routes/api/maps/redMarkers');
+// app.use('/api/maps/redMarkers', redMarkers);
+
+// // get past campaign markers in orange
+// const orangeMarkers = require('./routes/api/maps/orangeMarkers');
+// app.use('/api/maps/orangeMarkers', orangeMarkers);
+
+// // get past campaign markers in yellow
+// const yellowMarkers = require('./routes/api/maps/yellowMarkers');
+// app.use('/api/maps/yellowMarkers', yellowMarkers);
