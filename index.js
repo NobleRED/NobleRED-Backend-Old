@@ -56,62 +56,113 @@ app.get('/api', function (req, res) {
 
 // Get all accepted campaign details
 const campaignAccept = require('./routes/api/campaigns/viewAccepted');
-app.use('/api/campaigns/accepted', campaignAccept );
+app.use('/api/campaigns/accepted', campaignAccept);
 
 // Get all campaign requests
 const campaignReq = require('./routes/api/campaigns/viewRequests');
-app.use('/api/campaigns/requests', campaignReq );
+app.use('/api/campaigns/requests', campaignReq);
 
 // insert a new campaign request to the db
 const newCampaignReq = require('./routes/api/campaigns/insertNew');
-app.use('/api/campaigns/new', newCampaignReq );
+app.use('/api/campaigns/new', newCampaignReq);
 
 // accepting a new campaign request to the db
 const acceptReq = require('./routes/api/campaigns/acceptReq');
-app.use('/api/campaigns/requests', acceptReq );
+app.use('/api/campaigns/requests', acceptReq);
 
 
 // POSTS
 
 //get all blood needed posts
 const bloodReq = require('./routes/api/posts/bloodNeeded');
-app.use('/api/blood_needed_posts', bloodReq );
+app.use('/api/blood_needed_posts', bloodReq);
 
 
 // ORGANIZERS
 
 // get all organizers
 const viewOrgs = require('./routes/api/organizers/viewOrg');
-app.use('/api/organizers', viewOrgs );   
+app.use('/api/organizers', viewOrgs);
 
 // insert a new organizer to the db
 const newOrg = require('./routes/api/organizers/insertNewOrg');
-app.use('/api/neworganizer', newOrg );
+app.use('/api/neworganizer', newOrg);
 
 // get organizer by id
 const orgId = require('./routes/api/organizers/orgById');
-app.use('/api/organizers/:uid', orgId );
+app.use('/api/organizers/:uid', orgId);
 
 // get the next organizer id
 const nextOrg = require('./routes/api/organizers/nextOrgId');
-app.use('/api/organizers/nextid', nextOrg );
+app.use('/api/organizers/nextid', nextOrg);
 
 
 // DONORS
 
 // get all donors
 const viewDonor = require('./routes/api/donor/viewDonors');
-app.use('/api/donors', viewDonor );
+app.use('/api/donors', viewDonor);
 
 // get donor by id
 const donId = require('./routes/api/donor/donorById');
-app.use('/api/donors/:uid', donId );
+app.use('/api/donors/:uid', donId);
 
 // get the next donor id
 const nextDonId = require('./routes/api/donor/nextDonorId');
-app.use('/api/donors/nextid', nextDonId );
+app.use('/api/donors/nextid', nextDonId);
 
 // MAPS
+
+
+app.get('/api/bloodneededposts/lastfour', function (req, res) {
+    const bloodposts = [];
+    var lastID;
+    var tempID;
+    var nextID;
+
+    db.collection("posts").doc("blood_needed_posts").collection("blood_needed_posts").orderBy('publishedDateTime', "desc").limit(4).get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+            snapshot.forEach(doc => {
+                var dataArray = doc.data();
+                bloodposts.push(dataArray)
+            });
+
+            // console.log("blood_need_posts: " + JSON.stringify(bloodposts))
+            res.send(JSON.stringify(bloodposts))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+
+app.get('/api/campaignposts/lastfour', function (req, res) {
+    const campaignposts = [];
+    var lastID;
+    var tempID;
+    var nextID;
+
+    db.collection("posts").doc("campaign_posts").collection("campaign_posts").where('status', '==', 'accepted').orderBy('publishedDateTime', "desc").limit(4).get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+            snapshot.forEach(doc => {
+                var dataArray = doc.data();
+                campaignposts.push(dataArray)
+            });
+
+            // console.log("blood_need_posts: " + JSON.stringify(bloodposts))
+            res.send(JSON.stringify(campaignposts))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
 
 // get past campaign markers in grey
 const greyMarkers = require('./routes/api/maps/greyMarkers');
@@ -120,6 +171,7 @@ app.use('/api/maps/greyMarkers', greyMarkers);
 // get past campaign markers in red
 // const redMarkers = require('./routes/api/maps/redMarkers');
 // app.use('/api/maps/redMarkers', redMarkers);
+
 
 // // get past campaign markers in orange
 // const orangeMarkers = require('./routes/api/maps/orangeMarkers');
