@@ -453,7 +453,55 @@ app.get('/api/organizers/:uid', function (req, res) {
         });
 });
 
+app.get('/api/bloodneededposts/lastfour', function (req, res) {
+    const bloodposts = [];
+    var lastID;
+    var tempID;
+    var nextID;
 
+    db.collection("posts").doc("blood_needed_posts").collection("blood_needed_posts").orderBy('publishedDateTime', "desc").limit(4).get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+            snapshot.forEach(doc => {
+                var dataArray = doc.data();
+                bloodposts.push(dataArray)
+            });
+
+            // console.log("blood_need_posts: " + JSON.stringify(bloodposts))
+            res.send(JSON.stringify(bloodposts))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+
+app.get('/api/campaignposts/lastfour', function (req, res) {
+    const campaignposts = [];
+    var lastID;
+    var tempID;
+    var nextID;
+
+    db.collection("posts").doc("campaign_posts").collection("campaign_posts").where('status', '==', 'accepted').orderBy('publishedDateTime', "desc").limit(4).get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+            snapshot.forEach(doc => {
+                var dataArray = doc.data();
+                campaignposts.push(dataArray)
+            });
+
+            // console.log("blood_need_posts: " + JSON.stringify(bloodposts))
+            res.send(JSON.stringify(campaignposts))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
 
 // app.post('/api/signup/donor', function (req, res) {
 //     var firstName = req.body.fname
