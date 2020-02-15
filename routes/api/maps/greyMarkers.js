@@ -5,7 +5,8 @@ var moment = require('moment');
 var db = admin.firestore();
 
 const routerGrayMarkers = express.Router();
-
+var today = Date();
+console.log('today is ' + today);
 // Get accepted campaigns
 routerGrayMarkers.get('/', function (req, res) {
     const posts = [];
