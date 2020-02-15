@@ -10,7 +10,7 @@ const routerViewCampaign = express.Router();
 routerViewCampaign.get('/', function (req, res) {
     const posts = [];
 
-    db.collection("posts").doc("campaign_posts").collection("campaign_posts").where('status', '==', 'accepted').get().
+    db.collection("campaigns").get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');

@@ -5,18 +5,19 @@ var moment = require('moment');
 var db = admin.firestore();
 
 const routerGrayMarkers = express.Router();
-
+var today = Date();
+console.log('today is '+today);
 // Get accepted campaigns
 routerGrayMarkers.get('/', function (req, res) {
     const posts = [];
 
-    db.collection("posts").doc("campaign_posts").collection("campaign_posts").orderBy("date","asc").get().
+    db.collection("posts").doc("campaign_posts").collection("campaign_posts").where("date","<",today).orderBy("date","asc").get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
                 return;
             }
-
+            
             snapshot.forEach(doc => {
                 console.log(doc.id, '=>', doc.data());
 

@@ -10,7 +10,7 @@ const routerViewOrg = express.Router();
 routerViewOrg.get('/', function (req, res) {
     const organizers = [];
 
-    db.collection("users").doc("organizers").collection("organizers").get().
+    db.collection("users-organizer").get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
