@@ -12,13 +12,15 @@ routerInsert.post('/', function (req, res) {
         organizerID: req.body.organizerID,
         organizerName: req.body.organizerName,
         address: req.body.address,
+        contactNo: req.body.contactNo,
         province: req.body.province,
         district: req.body.district,
         date: req.body.date,
         time: req.body.time,
         lat: req.body.lat,
         lng: req.body.lng,
-        publishedDateTime: req.body.publishedDateTime
+        publishedDateTime: req.body.publishedDateTime,
+        status: "pending"
     })
         .then(function (docRef) {
             console.log("Document written with ID: ", docRef.id);
