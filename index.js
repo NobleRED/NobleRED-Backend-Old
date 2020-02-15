@@ -89,8 +89,26 @@ const newOrg = require('./routes/api/organizers/insertNewOrg');
 app.use('/api/neworganizer', newOrg);
 
 // get organizer by id
-const orgId = require('./routes/api/organizers/orgById');
-app.use('/api/organizers/:uid', orgId);
+// const orgId = require('./routes/api/organizers/orgById');
+// app.use('/api/organizers/:uid', orgId);
+
+// get organizer by id
+app.get('/api/organizers/:uid', function (req, res) {
+    const uid = req.params.uid
+
+    // matches the uid with the given parameter
+    db.collection("users").doc("organizers").collection("organizers").where("uid", "==", uid).get()
+        .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                res.send(JSON.stringify(doc.data()))
+            });
+        })
+        .catch(function (error) {
+            console.log("Error getting documents: ", error);
+        });
+});
 
 // get the next organizer id
 const nextOrg = require('./routes/api/organizers/nextOrgId');
@@ -104,8 +122,25 @@ const viewDonor = require('./routes/api/donor/viewDonors');
 app.use('/api/donors', viewDonor);
 
 // get donor by id
-const donId = require('./routes/api/donor/donorById');
-app.use('/api/donors/:uid', donId);
+// const donId = require('./routes/api/donor/donorById');
+// app.use('/api/donors/:uid', donId);
+
+// get donor by id
+app.get('/api/donors/:uid', function (req, res) {
+    const uid = req.params.uid
+
+    db.collection("users").doc("donors").collection("donors").where("uid", "==", uid).get()
+        .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                res.send(JSON.stringify(doc.data()))
+            });
+        })
+        .catch(function (error) {
+            console.log("Error getting documents: ", error);
+        });
+});
 
 // get the next donor id
 const nextDonId = require('./routes/api/donor/nextDonorId');
