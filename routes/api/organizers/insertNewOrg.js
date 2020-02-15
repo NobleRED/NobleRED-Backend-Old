@@ -8,7 +8,7 @@ const routerInsertOrg = express.Router();
 // insert a new organizer to the db
 routerInsertOrg.post('/', function (req, res) {
 
-    db.collection("users").doc("organizers").collection("organizers").add({
+    db.collection("users-organizer").add({
         organizerID: req.body.organizerID,
         organizerName: req.body.organizerName,
         contactPerson: req.body.contactPerson,

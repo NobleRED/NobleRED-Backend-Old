@@ -12,7 +12,7 @@ routerNextOrg.get('/', function (req, res) {
     var tempID;
     var nextID;
 
-    db.collection("users").doc("organizers").collection("organizers").orderBy('createdAt', "desc").limit(1).get().
+    db.collection("users-organizer").orderBy('createdAt', "desc").limit(1).get().
         then(snapshot => {
             if (snapshot.empty) {
                 // console.log('No matching documents.');

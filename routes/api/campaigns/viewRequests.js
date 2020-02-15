@@ -11,7 +11,7 @@ const routerViewReq = express.Router();
 routerViewReq.get('/', function (req, res) {
     const campaign_requests = [];
 
-    db.collection("posts").doc("campaign_posts").collection("campaign_posts").where('status', '==', 'pending').get().
+    db.collection("campaigns-requests").where('status', '==', 'pending').get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');

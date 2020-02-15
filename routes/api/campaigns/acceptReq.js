@@ -10,13 +10,16 @@ const router = express.Router();
 router.post('/', function (req, res) {
     const cid = req.params.cid
 
-    const docRef = db.collection("posts").doc("campaign_posts").collection("campaign_posts").where("campaignID", '==', cid);
+    const docRef = db.collection("campaigns-requests").where("campaignID", '==', cid);
     docRef.update({
         status: 'accepted'
     })
         .then(function (docRef) {
             console.log("Updated successfully: ", docRef.id);
-            res.send(200, "Document written with ID: ", docRef.id)
+            db.collection("campaigns").add(docRef);
+            db.collection("campaigns-requests").where("campaignID", '==', cid).delete();
+            res.send(200, "Document written with ID: ", docRef.id);
+
         })
         .catch(function (error) {
             console.error("Error updating document: ", error);
