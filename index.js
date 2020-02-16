@@ -53,7 +53,24 @@ app.get("/api", function(req, res) {
   res.send("NobleRED Backend");
 });
 
-// CAMPAIGNS
+//get date
+var date = new Date();
+// console.log(date);
+
+function formatDate(date) {
+  var d = new Date(date),
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [year, month, day].join("-");
+}
+
+var today = formatDate(date);
+// console.log(today);
 
 // Get all accepted campaign details
 const campaignAccept = require("./routes/api/campaigns/viewAccepted");
@@ -62,6 +79,43 @@ app.use("/api/campaigns/accepted", campaignAccept);
 // Get all campaign requests
 const campaignReq = require("./routes/api/campaigns/viewRequests");
 app.use("/api/campaigns/requests", campaignReq);
+//get all the blood donation campaigns Today
+app.get("/api/campaignstoday", function(req, res) {
+  const posts = [];
+
+  db.collection("posts")
+    .doc("campaign_posts")
+    .collection("campaign_posts")
+    .where("date", "==", today)
+    .get()
+    .then(snapshot => {
+      if (snapshot.empty) {
+        console.log("No matching documents.");
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        // console.log(doc.id, '=>', doc.data());
+
+        // putting data to dataArray from firebase data object
+        var dataArray = doc.data();
+
+        // using moment to format date to "10 hours ago format"
+        dataArray.publishedDateTimeAgo = moment(
+          doc.data().publishedDateTime
+        ).fromNow();
+
+        // push data to the posts array
+        posts.push(dataArray);
+      });
+
+      // console.log("posts: " + JSON.stringify(posts))
+      res.send(JSON.stringify(posts));
+    })
+    .catch(err => {
+      console.log("Error getting documents", err);
+    });
+});
 
 // insert a new campaign request to the db
 const newCampaignReq = require("./routes/api/campaigns/insertNew");
@@ -130,6 +184,7 @@ app.use("/api/neworganizer", newOrg);
 // const orgId = require('./routes/api/organizers/orgById');
 // app.use('/api/organizers/:uid', orgId);
 
+// get organizer by id
 app.get("/api/organizers/:uid", function(req, res) {
   const uid = req.params.uid;
 
