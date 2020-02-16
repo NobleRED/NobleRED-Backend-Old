@@ -20,6 +20,10 @@ last4.get('/', function (req, res) {
             }
             snapshot.forEach(doc => {
                 var dataArray = doc.data();
+                dataArray.publishedDateTimeAgo = moment(
+                    doc.data().publishedDateTime
+                ).fromNow();
+
                 bloodposts.push(dataArray)
             });
 

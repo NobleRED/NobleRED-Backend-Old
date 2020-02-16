@@ -1,5 +1,6 @@
 var admin = require('firebase-admin');
 var express = require('express');
+var moment = require('moment');
 
 var db = admin.firestore();
 
@@ -19,6 +20,9 @@ lastcamp.get('/', function (req, res) {
             }
             snapshot.forEach(doc => {
                 var dataArray = doc.data();
+                dataArray.publishedDateTimeAgo = moment(
+                    doc.data().publishedDateTime
+                ).fromNow();
                 campaignposts.push(dataArray)
             });
 
