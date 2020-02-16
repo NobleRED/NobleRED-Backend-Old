@@ -187,5 +187,5 @@ const nextDonId = require("./routes/api/donor/nextDonorId");
 app.use("/api/donors/nextid", nextDonId);
 
 //add blood need posts
-const addbloodposts = require("./routes/api/posts/addBloodneed");
-app.use("/api/posts/addBloodneed", addbloodposts);
+const addBloodneed = require("./routes/api/posts/AddBloodneed");
+app.use("/api/addBloodneed", addBloodneed);

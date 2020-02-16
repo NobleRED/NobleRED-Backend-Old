@@ -4,7 +4,8 @@ var moment = require("moment");
 
 var db = admin.firestore();
 
-const addbloodposts = express.Router();
+const routeraddbloodneed = express.Router();
+
 routeraddbloodneed.post("/", function(req, res) {
   db.collection("posts-blood_needed")
     .add({
