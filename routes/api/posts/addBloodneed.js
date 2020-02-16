@@ -11,7 +11,7 @@ routeraddbloodneed.post("/", function(req, res) {
     .add({
       userID: req.body.userID,
       userName: req.body.userName,
-      contactNo: req.body.phoneNumber,
+      phoneNumber: req.body.phoneNumber,
       bloodType: req.body.bloodType,
       imgSrc: req.body.imgSrc,
       createdAt: req.body.publishedDateTimeAgo
