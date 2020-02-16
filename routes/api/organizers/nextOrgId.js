@@ -15,7 +15,7 @@ routerNextOrg.get('/', function (req, res) {
     db.collection("users-organizer").orderBy('createdAt', "desc").limit(1).get().
         then(snapshot => {
             if (snapshot.empty) {
-                // console.log('No matching documents.');
+                console.log('No matching documents.');
                 res.send('ORG-000001')
                 return;
             }

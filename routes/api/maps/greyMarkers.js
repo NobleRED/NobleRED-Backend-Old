@@ -29,8 +29,8 @@ routerGrayMarkers.get('/', function (req, res) {
 
                 // todayDate - campaignDate
                 var dateDiff = todayDate.diff(campaignDate, 'months')
-                console.log(todayDate, campaignDate)
-                console.log("difference", dateDiff)
+                // console.log(todayDate, campaignDate)
+                // console.log("difference", dateDiff)
 
 
                 dataArray.dateDeff = dateDiff;
