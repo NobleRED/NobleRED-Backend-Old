@@ -70,8 +70,8 @@ function formatDate(date) {
     return [year, month, day].join('-');
 }
 
-var today = formatDate(date);
-// console.log(today);
+var today=formatDate(date);
+console.log(today);
 
 // Get all accepted campaign details
 const campaignAccept = require('./routes/api/campaigns/viewAccepted');
@@ -79,7 +79,7 @@ app.use('/api/campaigns/accepted', campaignAccept);
 
 //get all the blood donation campaigns Today
 app.get('/api/campaignstoday', function (req, res) {
-    const posts = [];
+    const todayPost = [];
 
     db.collection("posts").doc("campaign_posts").collection("campaign_posts").where('date', '==', today).get().
         then(snapshot => {
@@ -95,17 +95,337 @@ app.get('/api/campaignstoday', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                dataArray.publishedDateTimeAgo = moment(
-                    doc.data().publishedDateTime
-                ).fromNow();
+                
 
                 // push data to the posts array
-                posts.push(dataArray)
+                todayPost.push(dataArray);
 
             });
 
             // console.log("posts: " + JSON.stringify(posts))
-            res.send(JSON.stringify(posts))
+            res.send(JSON.stringify(todayPost))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+
+//get male donors
+app.get('/api/donorsmale', function (req, res) {git
+    const users = [];
+
+    db.collection("users").doc("donors").collection("donors").where('gender', '==', 'male').get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                
+
+                // push data to the posts array
+                users.push(dataArray);
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(users))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+
+//get female donors
+app.get('/api/donorsfemale', function (req, res) {
+    const users = [];
+
+    db.collection("users").doc("donors").collection("donors").where('gender', '==', 'female').get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                
+
+                // push data to the posts array
+                users.push(dataArray);
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(users))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+//get A+ donors
+app.get('/api/donorsAplus', function (req, res) {
+    const users = [];
+
+    db.collection("users").doc("donors").collection("donors").where('bloodType', '==', 'A+').get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                
+
+                // push data to the posts array
+                users.push(dataArray);
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(users))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+//get A- donors
+app.get('/api/donorsAmin', function (req, res) {
+    const users = [];
+
+    db.collection("users").doc("donors").collection("donors").where('bloodType', '==', 'A-').get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                
+
+                // push data to the posts array
+                users.push(dataArray);
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(users))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+//get B+ donors
+app.get('/api/donorsBplus', function (req, res) {
+    const users = [];
+
+    db.collection("users").doc("donors").collection("donors").where('bloodType', '==', 'B+').get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                
+
+                // push data to the posts array
+                users.push(dataArray);
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(users))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+//get B- donors
+app.get('/api/donorsBmin', function (req, res) {
+    const users = [];
+
+    db.collection("users").doc("donors").collection("donors").where('bloodType', '==', 'B-').get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                
+
+                // push data to the posts array
+                users.push(dataArray);
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(users))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+//get AB+ donors
+app.get('/api/donorsABplus', function (req, res) {
+    const users = [];
+
+    db.collection("users").doc("donors").collection("donors").where('bloodType', '==', 'AB+').get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                
+
+                // push data to the posts array
+                users.push(dataArray);
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(users))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+//get AB- donors
+app.get('/api/donorsABmin', function (req, res) {
+    const users = [];
+
+    db.collection("users").doc("donors").collection("donors").where('bloodType', '==', 'AB-').get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                
+
+                // push data to the posts array
+                users.push(dataArray);
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(users))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+//get O+ donors
+app.get('/api/donorsOplus', function (req, res) {
+    const users = [];
+
+    db.collection("users").doc("donors").collection("donors").where('bloodType', '==', 'O+').get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                
+
+                // push data to the posts array
+                users.push(dataArray);
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(users))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+//get O- donors
+app.get('/api/donorsOmin', function (req, res) {
+    const users = [];
+
+    db.collection("users").doc("donors").collection("donors").where('bloodType', '==', 'O-').get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                
+
+                // push data to the posts array
+                users.push(dataArray);
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(users))
         })
         .catch(err => {
             console.log('Error getting documents', err);
