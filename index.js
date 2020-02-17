@@ -10,7 +10,7 @@ var serviceAccount = require("./account/serviceAccount.json");
 var app = express();
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
-app.listen(4200, () => console.log("Server Started on port 4200"));
+app.listen(process.env.PORT || 4200, () => console.log("Server Started on port 4200"));
 
 // To enable cross-origin access
 app.use(function (req, res, next) {
@@ -70,7 +70,7 @@ function formatDate(date) {
     return [year, month, day].join('-');
 }
 
-var today=formatDate(date);
+var today = formatDate(date);
 console.log(today);
 
 // Get all accepted campaign details
@@ -95,7 +95,7 @@ app.get('/api/campaignstoday', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                
+
 
                 // push data to the posts array
                 todayPost.push(dataArray);
@@ -111,7 +111,8 @@ app.get('/api/campaignstoday', function (req, res) {
 });
 
 //get male donors
-app.get('/api/donorsmale', function (req, res) {git
+app.get('/api/donorsmale', function (req, res) {
+    git
     const users = [];
 
     db.collection("users").doc("donors").collection("donors").where('gender', '==', 'male').get().
@@ -128,7 +129,7 @@ app.get('/api/donorsmale', function (req, res) {git
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                
+
 
                 // push data to the posts array
                 users.push(dataArray);
@@ -161,7 +162,7 @@ app.get('/api/donorsfemale', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                
+
 
                 // push data to the posts array
                 users.push(dataArray);
@@ -193,7 +194,7 @@ app.get('/api/donorsAplus', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                
+
 
                 // push data to the posts array
                 users.push(dataArray);
@@ -225,7 +226,7 @@ app.get('/api/donorsAmin', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                
+
 
                 // push data to the posts array
                 users.push(dataArray);
@@ -257,7 +258,7 @@ app.get('/api/donorsBplus', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                
+
 
                 // push data to the posts array
                 users.push(dataArray);
@@ -289,7 +290,7 @@ app.get('/api/donorsBmin', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                
+
 
                 // push data to the posts array
                 users.push(dataArray);
@@ -321,7 +322,7 @@ app.get('/api/donorsABplus', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                
+
 
                 // push data to the posts array
                 users.push(dataArray);
@@ -335,6 +336,43 @@ app.get('/api/donorsABplus', function (req, res) {
             console.log('Error getting documents', err);
         });
 });
+
+
+
+app.get('/api/campaignRequests', function (req, res) {
+    const campaign_requests = [];
+
+    db.collection("campaigns-requests").where('status', '==', 'pending').get().
+        then(snapshot => {
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                // console.log(doc.id, '=>', doc.data());
+
+                // putting data to dataArray from firebase data object
+                var dataArray = doc.data();
+
+                // using moment to format date to "10 hours ago format"
+                dataArray.publishedDateTimeAgo = moment(
+                    doc.data().publishedDateTime
+                ).fromNow();
+
+                // push data to the posts array
+                campaign_requests.push(dataArray)
+
+            });
+
+            // console.log("posts: " + JSON.stringify(posts))
+            res.send(JSON.stringify(campaign_requests))
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+});
+
 //get AB- donors
 app.get('/api/donorsABmin', function (req, res) {
     const users = [];
@@ -353,7 +391,7 @@ app.get('/api/donorsABmin', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                
+
 
                 // push data to the posts array
                 users.push(dataArray);
@@ -385,7 +423,7 @@ app.get('/api/donorsOplus', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                
+
 
                 // push data to the posts array
                 users.push(dataArray);
@@ -417,7 +455,7 @@ app.get('/api/donorsOmin', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                
+
 
                 // push data to the posts array
                 users.push(dataArray);
@@ -443,6 +481,7 @@ app.use('/api/campaigns/new', newCampaignReq);
 // app.use('/api/campaigns/accept/:cid', acceptReq);
 app.post('/api/campaigns/accept/:cid', function (req, res) {
     const cid = req.params.cid
+    console.log(cid.organizerID)
 
     const docRef = db.collection("campaigns-requests").where("campaignID", '==', cid);
     db.collection("campaigns").add(docRef);
