@@ -9,7 +9,7 @@ const routerInsertOrg = express.Router();
 routerInsertOrg.post('/', function (req, res) {
 
     db.collection("users-organizer").add({
-        organizerID: req.body.organizerID,
+        organizerID: 2222222222222,
         organizerName: req.body.organizerName,
         contactPerson: req.body.contactPerson,
         contactPersonNIC: req.body.contactPersonNIC,
@@ -18,7 +18,8 @@ routerInsertOrg.post('/', function (req, res) {
         email: req.body.email,
         createdAt: req.body.createdAt,
         role: req.body.role,
-        status: req.body.status
+        status: req.body.status,
+        password: req.body.password
     })
         .then(function (docRef) {
             console.log("Document written with ID: ", docRef.id);
