@@ -11,7 +11,7 @@ console.log('today is ' + today);
 routerGrayMarkers.get('/', function (req, res) {
     const posts = [];
 
-    db.collection("posts").doc("campaign_posts").collection("campaign_posts").orderBy("date", "asc").get().
+    db.collection("posts").doc("campaign_posts").collection("campaign_posts").orderBy("date", "desc").limit(1).get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
@@ -24,9 +24,16 @@ routerGrayMarkers.get('/', function (req, res) {
                 // putting data to dataArray from firebase data object
                 var dataArray = doc.data();
 
-                var todayDate = moment(doc.data().date);
-                var campaignDate = doc.data().date;
-                console.log(todayDate, campaignDate)
+                var todayDate = moment();
+                var campaignDate = moment(doc.data().date);
+
+                // todayDate - campaignDate
+                var dateDiff = todayDate.diff(campaignDate, 'months')
+                // console.log(todayDate, campaignDate)
+                // console.log("difference", dateDiff)
+
+
+                dataArray.dateDeff = dateDiff;
 
                 // using moment to format date to "10 hours ago format"
                 // dataArray.publishedDateTimeAgo = moment(
