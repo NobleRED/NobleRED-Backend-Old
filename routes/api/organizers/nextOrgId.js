@@ -16,7 +16,7 @@ routerNextOrg.get('/', function (req, res) {
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
-                res.send('ORG-000001')
+                res.send('ORG-000001');
                 return;
             }
 

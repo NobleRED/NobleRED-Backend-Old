@@ -11,7 +11,7 @@ console.log('today is ' + today);
 routerGrayMarkers.get('/', function (req, res) {
     const posts = [];
 
-    db.collection("posts").doc("campaign_posts").collection("campaign_posts").orderBy("date", "desc").limit(1).get().
+    db.collection("campaigns").orderBy("date", "desc").get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');

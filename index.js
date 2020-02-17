@@ -10,7 +10,7 @@ var serviceAccount = require("./account/serviceAccount.json");
 var app = express();
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
-app.listen(4200, () => console.log("Server Started!"));
+app.listen(4200, () => console.log("Server Started on port 4200"));
 
 // To enable cross-origin access
 app.use(function (req, res, next) {
@@ -455,6 +455,10 @@ app.post('/api/campaigns/accept/:cid', function (req, res) {
 const last = require('./routes/api/campaigns/last4campaigns');
 app.use('/api/campaignposts/lastfour', last);
 
+
+// const viewreq = require("./routes/api/campaigns/viewRequests");
+// app.use('/api/campaigns/requests', viewreq);
+
 app.get('/api/organizers/nextid', function (req, res) {
     const organizers = [];
     var lastID;
@@ -599,6 +603,7 @@ app.get('/api/admins/nextid', function (req, res) {
             console.log('Error getting documents', err);
         });
 });
+
 
 
 
