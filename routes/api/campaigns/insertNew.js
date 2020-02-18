@@ -9,6 +9,7 @@ const routerInsert = express.Router();
 routerInsert.post('/', function (req, res) {
 
     db.collection("campaigns-requests").add({
+        requestID: req.body.requestID,
         organizerID: req.body.organizerID,
         organizerName: req.body.organizerName,
         address: req.body.address,

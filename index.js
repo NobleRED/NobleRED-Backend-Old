@@ -62,11 +62,11 @@ app.use('/api/campaignposts/lastfour', last);
 
 // view campaign requests
 const viewreq = require("./routes/api/campaigns/viewRequests");
-app.use('/api/campaignRequests', viewreq);
+app.use('/api/campaigns/requests', viewreq);
 
 // get next organizer id
-const nextOrgID =  require('./routes/api/organizers/nextOrgId');
-app.use('/api/organizers/nextid',nextOrgID);
+const nextOrgID = require('./routes/api/organizers/nextOrgId');
+app.use('/api/organizers/nextid', nextOrgID);
 
 // get next id of admin
 const adminNextID = require('./routes/api/admins/nextAdminId');
