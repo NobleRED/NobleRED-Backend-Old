@@ -12,7 +12,7 @@ last4.get('/', function (req, res) {
     var tempID;
     var nextID;
 
-    db.collection("posts").doc("blood_needed_posts").collection("blood_needed_posts").orderBy('publishedDateTime', "desc").limit(4).get().
+    db.collection("posts-blood_needed").orderBy('publishedDateTime', "desc").limit(4).get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
