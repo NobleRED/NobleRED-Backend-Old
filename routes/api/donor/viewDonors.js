@@ -10,7 +10,7 @@ const routerViewDonors = express.Router();
 routerViewDonors.get('/', function (req, res) {
     const posts = [];
 
-    db.collection("users").doc("donors").collection("donors").get().
+    db.collection("users-donor").get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
