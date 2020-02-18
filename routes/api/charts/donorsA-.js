@@ -1,17 +1,14 @@
 var admin = require('firebase-admin');
 var express = require('express');
-var moment = require('moment');
-
 var db = admin.firestore();
 
-const routerViewReq = express.Router();
+const aneg = express.Router();
 
-// Get campaign requests
-// get all the blood donation campaign requests
-routerViewReq.get('/', function (req, res) {
-    const campaign_requests = [];
+//get A- donors
+aneg.get('/', function (req, res) {
+    const users = [];
 
-    db.collection("campaigns-requests").where('status', '==', 'pending').get().
+    db.collection("donors").where('bloodType', '==', 'A-').get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
@@ -25,21 +22,19 @@ routerViewReq.get('/', function (req, res) {
                 var dataArray = doc.data();
 
                 // using moment to format date to "10 hours ago format"
-                dataArray.publishedDateTimeAgo = moment(
-                    doc.data().publishedDateTime
-                ).fromNow();
+
 
                 // push data to the posts array
-                campaign_requests.push(dataArray)
+                users.push(dataArray);
 
             });
 
             // console.log("posts: " + JSON.stringify(posts))
-            res.send(JSON.stringify(campaign_requests))
+            res.send(JSON.stringify(users))
         })
         .catch(err => {
             console.log('Error getting documents', err);
         });
 });
 
-module.exports = routerViewReq;
+module.exports = aneg;
