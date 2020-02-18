@@ -12,7 +12,7 @@ last4.get('/', function (req, res) {
     var tempID;
     var nextID;
 
-    db.collection("posts-blood_needed").orderBy('publishedDateTime', "desc").limit(4).get().
+    db.collection("posts").doc("blood_needed_posts").collection("blood_needed_posts").orderBy('publishedDateTime', "desc").limit(4).get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
@@ -20,6 +20,10 @@ last4.get('/', function (req, res) {
             }
             snapshot.forEach(doc => {
                 var dataArray = doc.data();
+                dataArray.publishedDateTimeAgo = moment(
+                    doc.data().publishedDateTime
+                ).fromNow();
+
                 bloodposts.push(dataArray)
             });
 

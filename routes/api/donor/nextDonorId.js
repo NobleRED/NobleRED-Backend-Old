@@ -16,7 +16,7 @@ routerNextDId.get('/', function (req, res) {
     db.collection("users").doc("donors").collection("donors").orderBy('createdAt', "desc").limit(1).get().
         then(snapshot => {
             if (snapshot.empty) {
-                // console.log('No matching documents.');
+                console.log('No matching documents.');
                 res.send('DNR-000001')
                 return;
             }
