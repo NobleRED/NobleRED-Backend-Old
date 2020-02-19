@@ -691,7 +691,7 @@ app.use("/api/maps/greyMarkers", greyMarkers);
 // const yellowMarkers = require('./routes/api/maps/yellowMarkers');
 // app.use('/api/maps/yellowMarkers', yellowMarkers);
 
-// POSTS
+//------------------BLOOD NEED POSTS------------------------------//
 
 //get all blood needed posts
 const bloodReq = require("./routes/api/posts/bloodNeeded");
@@ -701,6 +701,79 @@ app.use("/api/blood_needed_posts", bloodReq);
 const lastposts = require("./routes/api/posts/last4posts");
 app.use("/api/bloodneededposts/lastfour", lastposts);
 
+//blood need posts id generator
+app.get("/api/posts/nextId", function(req, res) {
+  const needPosts = [];
+  var lastID;
+  var tempID;
+  var nextID;
+
+  console.log("here");
+
+  db.collection("posts-blood_needed")
+    .orderBy("publishedDateTime", "desc")
+    .get()
+    .then(snapshot => {
+      if (snapshot.empty) {
+        console.log("No matching documents.");
+        res.send("PST-000001");
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        var dataArray = doc.data();
+        needPosts.push(dataArray);
+      });
+
+      lastID = parseInt(needPosts[0].postID.substring(4));
+      tempID = lastID + 1;
+
+      if (tempID < 1000000 && tempID >= 100000) {
+        nextID = "PST-" + tempID;
+      } else if (tempID < 100000 && tempID >= 10000) {
+        nextID = "PST-0" + tempID;
+      } else if (tempID < 10000 && tempID >= 1000) {
+        nextID = "PST-00" + tempID;
+      } else if (tempID < 1000 && tempID >= 100) {
+        nextID = "PST-000" + tempID;
+      } else if (tempID < 100 && tempID >= 10) {
+        nextID = "PST-0000" + tempID;
+      } else if (tempID < 10) {
+        nextID = "PST-00000" + tempID;
+      } else {
+        nextID = "Limit exceeded!";
+      }
+
+      console.log("Posts: ", lastID, nextID);
+      res.send(nextID);
+    })
+    .catch(err => {
+      console.log("Error getting documents", err);
+    });
+});
+
+// Add blood need posts
+const addBloodPosts = require("./routes/api/posts/addBloodneed");
+app.use("/api/addBloodPosts", addBloodPosts);
+
+//Delete blood need posts
+app.get("/api/posts/deletePosts/:postID", function(req, res) {
+  const deleteDoc = req.params.postID;
+  console.log(deletedoc);
+  db.collection("posts-blood_needed")
+    .doc(deleteDoc)
+    .delete()
+    .then(
+      function() {
+        console.log("Successfully Deleted");
+      }.catch(function(error) {
+        console.log("Error removing document", error);
+      })
+    );
+});
+//Update blood need posts
+
+//--------------------------------------------------------------------------------------------------------//
 // ORGANIZERS
 
 // get all organizers
@@ -799,23 +872,25 @@ app.use("/api/donors", viewDonor);
 // app.use('/api/donors/:uid', donId);
 
 // get donor by id
-app.get("/api/donors/:uid", function(req, res) {
-  const uid = req.params.uid;
+// app.get("/api/donors/:uid", function(req, res) {
+//   const uid = req.params.uid;
 
-  db.collection("users-donor")
-    .where("uid", "==", uid)
-    .get()
-    .then(function(querySnapshot) {
-      querySnapshot.forEach(function(doc) {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-        res.send(JSON.stringify(doc.data()));
-      });
-    })
-    .catch(function(error) {
-      console.log("Error getting documents: ", error);
-    });
-});
+//   db.collection("users-donor")
+//     .where("uid", "==", uid)
+//     .get()
+//     .then(function(querySnapshot) {
+//       querySnapshot.forEach(function(doc) {
+//         // doc.data() is never undefined for query doc snapshots
+//         console.log(doc.id, " => ", doc.data());
+//         res.send(JSON.stringify(doc.data()));
+//       });
+//     })
+//     .catch(function(error) {
+//       console.log("Error getting documents: ", error);
+//     });
+// });
+
+// get donor by id
 
 // get the next donor id
 // const nextDonId = require('./routes/api/donor/nextDonorId');

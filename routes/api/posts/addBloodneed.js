@@ -9,12 +9,13 @@ const routeraddbloodneed = express.Router();
 routeraddbloodneed.post("/", function(req, res) {
   db.collection("posts-blood_needed")
     .add({
+      postID: req.body.postID,
       userID: req.body.userID,
       userName: req.body.userName,
       contact: req.body.contact,
       bloodType: req.body.bloodType,
       imgSrc: req.body.imgSrc,
-      createdAt: req.body.publishedDateTimeAgo
+      publishedDateTime: req.body.publishedDateTime
     })
     .then(function(docRef) {
       console.log("Document written with ID: ", docRef.id);
