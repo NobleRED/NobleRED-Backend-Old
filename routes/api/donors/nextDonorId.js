@@ -26,7 +26,7 @@ routerNextDId.get('/', function (req, res) {
                 donors.push(dataArray);
             });
 
-            lastID = parseInt(donors[0].organizerID.substring(4));
+            lastID = parseInt(donors[0].donorID.substring(4));
             tempID = lastID + 1;
 
             if (tempID < 1000000 && tempID >= 100000) {
