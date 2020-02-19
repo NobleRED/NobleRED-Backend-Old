@@ -10,7 +10,7 @@ const routerBloodNeeded = express.Router();
 routerBloodNeeded.get('/', function (req, res) {
     const blood_need_posts = [];
 
-    db.collection("posts").doc("blood_needed_posts").collection("blood_needed_posts").get().
+    db.collection("posts-blood_needed").get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
