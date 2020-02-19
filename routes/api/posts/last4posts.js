@@ -6,19 +6,16 @@ var db = admin.firestore();
 
 const last4 = express.Router();
 
-last4.get("/", function(req, res) {
+last4.get("/", function (req, res) {
   const bloodposts = [];
   var lastID;
   var tempID;
   var nextID;
 
-  db.collection("posts-blood_needed")
-    .orderBy("publishedDateTime", "desc")
-    .limit(4)
-    .get()
-    .then(snapshot => {
+  db.collection("posts-blood_needed").orderBy('publishedDateTime', "desc").limit(4).get().
+    then(snapshot => {
       if (snapshot.empty) {
-        console.log("No matching documents.");
+        console.log('No matching documents.');
         return;
       }
       snapshot.forEach(doc => {

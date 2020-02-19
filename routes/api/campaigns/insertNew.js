@@ -7,8 +7,11 @@ const routerInsert = express.Router();
 
 // insert a new campaign request to the db
 routerInsert.post('/', function (req, res) {
+    var requestID = req.body.requestID.toString()
+    console.log(requestID)
 
-    db.collection("campaigns-requests").add({
+    db.collection("campaigns-requests").doc(requestID).set({
+        requestID: req.body.requestID,
         organizerID: req.body.organizerID,
         organizerName: req.body.organizerName,
         address: req.body.address,
