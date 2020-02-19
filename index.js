@@ -123,6 +123,7 @@ app.get('/api/organizers/:uid', function (req, res) {
 });
 
 
+
 // ADMINS
 
 // view admins
@@ -155,9 +156,9 @@ app.get('/api/admins/:uid', function (req, res) {
 const viewDonor = require('./routes/api/donors/viewDonors');
 app.use('/api/donors', viewDonor);
 
-// get donor by id
-// const donId = require('./routes/api/donor/donorById');
-// app.use('/api/donors/:uid', donId);
+// get next donor id
+const nextDonorId = require('./routes/api/donors/nextDonorId');
+app.use('/api/donors/nextid', nextDonorId);
 
 // get donor by id
 app.get('/api/donors/:uid', function (req, res) {
@@ -176,10 +177,10 @@ app.get('/api/donors/:uid', function (req, res) {
         });
 });
 
-/// Don't work
-// get next donor id
-const nextDonorId = require('./routes/api/donors/nextDonorId');
-app.use('/api/donors/nextid', nextDonorId);
+
+
+// const nextDonorId = require('./routes/api/donors/nextDonorId');
+// app.use('/api/donors/nextid', nextDonorId);
 
 // Charts
 
