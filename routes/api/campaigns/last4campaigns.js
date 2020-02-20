@@ -12,7 +12,7 @@ lastcamp.get('/', function (req, res) {
     var tempID;
     var nextID;
 
-    db.collection("campaigns").orderBy('publishedDateTime', "desc").limit(4).get().
+    db.collection("campaigns").orderBy('date', "asc").limit(4).get().
         then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');
